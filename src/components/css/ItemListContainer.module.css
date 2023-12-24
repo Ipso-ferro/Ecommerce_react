@@ -1,0 +1,5 @@
+.gridItems {
+    padding: 5%;
+    display: flex;
+    justify-content: center;
+}
