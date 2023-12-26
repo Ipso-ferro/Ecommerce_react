@@ -6,20 +6,24 @@ import { getFirestore, getDoc, doc } from "firebase/firestore";
 import { Loading } from "./Loading";
 
 export const ItemDetailContainer = () => {
-
   const [item, setItem] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
-    const db = getFirestore();
+    const fetchData = async () => {
+      const db = getFirestore();
+      const refDoc = doc(db, "items", id);
 
-    const refDoc = doc(db, "items", id);
+      // Wait for 2 seconds
+      await new Promise(resolve => setTimeout(resolve, 1200));
 
-    getDoc(refDoc).then((snapshot) => {
-      setItem({ id: snapshot.id, ...snapshot.data() });
-    });
+      getDoc(refDoc).then((snapshot) => {
+        setItem({ id: snapshot.id, ...snapshot.data() });
+      });
+    };
+
+    fetchData();
   }, [id]);
-
 
   return <div>{item ? <ItemDetail item={item} /> : <Loading></Loading>}</div>;
 };

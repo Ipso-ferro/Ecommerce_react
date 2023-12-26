@@ -38,7 +38,6 @@ export const Checkout = () => {
       if (id) {
         alert("Su orden: " + id + " ha sido completada!");
         setBuyer(initialValues);
-        // Clear any other state or perform additional actions as needed
       }
     });
   };

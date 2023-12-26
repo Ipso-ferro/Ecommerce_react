@@ -12,55 +12,67 @@ import { CartContext } from "../Context/CartContext";
 
 export const ItemListContainer = () => {
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { id } = useParams();
-
   const value = useContext(CartContext);
-  
-  // importing data from categoryId
+
   useEffect(() => {
-    const db = getFirestore();
+    const fetchData = async () => {
+      setLoading(true);
 
-    const refCollection = !id ? collection(db, "items"):
-    query (
-      collection (db,'items'),
-      where ('categoryId','==',id)
-    );
+      const db = getFirestore();
+      const refCollection = !id ? collection(db, "items") : query(collection(db, 'items'), where('categoryId', '==', id));
 
-    getDocs(refCollection).then((snapshot) => {
-      if (snapshot.size === 0) console.log("no results");
-      else
-        setItems(
-          snapshot.docs.map((doc) => {
-            return { id: doc.id, ...doc.data() };
-          })
-        );
-    });
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      getDocs(refCollection)
+        .then((snapshot) => {
+          if (snapshot.size === 0) console.log("no results");
+          else
+            setItems(
+              snapshot.docs.map((doc) => {
+                return { id: doc.id, ...doc.data() };
+              })
+            );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+
+    fetchData();
   }, [id]);
 
-
-  // importing all data to home 
   useEffect(() => {
-    const db = getFirestore();
+    const fetchData = async () => {
+      setLoading(true);
 
-    const refCollection = collection(db, "items");
+      const db = getFirestore();
+      const refCollection = collection(db, "items");
 
-    getDocs(refCollection).then((snapshot) => {
-      if (snapshot.size === 0) console.log("no results");
-      else
-      setItems(
-          snapshot.docs.map((doc) => {
-            return { id: doc.id, ...doc.data() };
-          })
-        );
-    });
+      
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      getDocs(refCollection)
+        .then((snapshot) => {
+          if (snapshot.size === 0) console.log("no results");
+          else
+            setItems(
+              snapshot.docs.map((doc) => {
+                return { id: doc.id, ...doc.data() };
+              })
+            );
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    };
+
+    fetchData();
   }, []);
 
-
-
-
   return (
-    <div className={`${ItemListContainerCss.gridItems}`}>
-      {items ? <ItemList items={items} /> : <Loading />}
-    </div>
-  );
-};
+    <d className={`${ItemListContainerCss.gridItems}`}>
+      {loading ? <Loading /> : <ItemList items={items} />}
+    </d>)}
